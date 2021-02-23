@@ -11,12 +11,14 @@ import {
 import { UserService } from './user.service';
 import { PostService } from './post.service';
 import { User as UserModel, Post as PostModel } from '@prisma/client';
+import { TestResultService } from './test_result_service';
 
 @Controller()
 export class AppController {
   constructor(
     private readonly userService: UserService,
     private readonly postService: PostService,
+    private readonly resultService: TestResultService,
   ) { }
 
   @Get('post/:id')
@@ -29,6 +31,13 @@ export class AppController {
     return this.postService.posts({
       where: { published: true },
     });
+  }
+
+  @Post('test')
+  async registerResult(@Body('score') score: number) {
+    return this.resultService.createTestResult({
+      score: score
+    })
   }
 
   @Get('filtered-posts/:searchString')
@@ -76,6 +85,7 @@ export class AppController {
       where: { id: Number(id) },
       data: { published: true },
     });
+
   }
 
   @Delete('post/:id')
